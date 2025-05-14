@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="info-box">
+        <strong>Manual Estimation:</strong> Enter your CET marks to get an estimated rank range based on available candidate data.
+    </div>
+
+    {% if error %}
+        <div class="alert error">{{ error }}</div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" class="form">
+        <div class="form-group">
+            <label for="marks" class="input-label">
+                <i class="fas fa-chart-line"></i> Your CET Marks
+            </label>
+            <div class="input-group">
+                <input type="number" id="marks" name="marks" min="0" max="200" step="0.01" 
+                       class="input" placeholder="Enter marks (e.g., 185.5)" required>
+                <div class="input-suffix">/200</div>
+            </div>
+            <small class="input-help">Enter your total CET marks out of 200</small>
+        </div>
+        
+        <button type="submit" class="btn">
+            <i class="fas fa-calculator"></i>
+            Calculate Estimated Rank
+        </button>
+    </form>
+
+    {% if result %}
+        <div class="result-card {% if result.eligible %}success{% else %}warning{% endif %}">
+            <h2>Estimated Results</h2>
+            
+            <div class="result-details">
+                <div class="marks-display">
+                    <span class="marks-value">{{ result.marks }}</span>
+                    <span class="marks-label">marks</span>
+                </div>
+                
+                {% if result.eligible %}
+                    <div class="rank-info">
+                        <p><strong>Estimated Rank Range:</strong></p>
+                        <div class="rank-range">
+                            <span>{{ result.rank_range.min }}</span>
+                            <span class="rank-separator">to</span>
+                            <span>{{ result.rank_range.max }}</span>
+                        </div>
+                        <p class="status-badge success">
+                            <i class="fas fa-check-circle"></i>
+                            Eligible for KCET Agri Quota
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="rank-info">
+                        <p class="status-badge warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Not eligible for KCET Agri Quota (Marks below 100)
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <p class="note">
+                <i class="fas fa-info-circle"></i> 
+                Based on data of {{ result.total_candidates }} candidates. Actual rank may vary.
+            </p>
+        </div>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to CET Number Search
+    </a>
+</div>
+{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .result-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .marks-display {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .marks-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .marks-label {
+        font-size: 1.2rem;
+        color: var(--text-light);
+    }
+    
+    .rank-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .rank-range {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .rank-separator {
+        font-size: 1rem;
+        color: var(--text-light);
+        font-weight: 400;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 600;
+        margin-top: 0.75rem;
+    }
+    
+    .status-badge.success {
+        background-color: rgba(34, 197, 94, 0.1);
+        color: var(--success-color);
+    }
+    
+    .status-badge.warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning-color);
+    }
+    
+    .note {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--text-light);
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px dashed rgba(100, 116, 139, 0.2);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="info-box">
+        <strong>Welcome!</strong> Enter your CET number to check your predicted rank and admission eligibility. This data is based on official university results.
+    </div>
+
+    {% if error %}
+        <div class="alert error">{{ error }}</div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" class="form">
+        <div class="form-group">
+            <label for="cet_number" class="input-label">
+                <i class="fas fa-id-card"></i> Your CET Number
+            </label>
+            <div class="input-group">
+                <input type="text" id="cet_number" name="cet_number" class="input" 
+                       pattern="[0-9]{9}" placeholder="Enter your 9-digit CET number" 
+                       title="Please enter a valid 9-digit CET number" required>
+            </div>
+            <small class="input-help">Enter your 9-digit CET registration number</small>
+        </div>
+        
+        <button type="submit" class="btn">
+            <i class="fas fa-search"></i>
+            Check Your Results
+        </button>
+        
+        <a href="{{ url_for('manual_entry') }}" class="btn btn-secondary">
+            <i class="fas fa-calculator"></i>
+            Estimate by Marks Instead
+        </a>
+    </form>
+
+    {% if result %}
+        <div class="result-card {% if result.eligible %}success{% else %}error{% endif %}">
+            <h2>Results for CET No: {{ result.cet_number }}</h2>
+            
+            <div class="result-info">
+                <p><strong>Your Marks:</strong> {{ result.marks }}</p>
+
+                {% if result.eligible %}
+                    <p><strong>Predicted Rank Range:</strong> {{ result.rank_range.min }} - {{ result.rank_range.max }}</p>
+                    <p class="status success-status">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Eligible for KCET Agri Quota</span>
+                    </p>
+                {% else %}
+                    <p class="status error-status">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Not eligible for KCET Agri Quota(Marks below 100)</span>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .result-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .result-info p {
+        font-size: 1.1rem;
+    }
+
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+    }
+
+    .success-status {
+        color: var(--success-color);
+    }
+
+    .error-status {
+        color: var(--error-color);
+    }
+
+    .btn-secondary {
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}

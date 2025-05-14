@@ -1,0 +1,159 @@
+
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - KCET Agri Practical Rank Predictor{% endblock %}
+
+{% block header %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <h3>Total Visitors</h3>
+            <p class="stat-value">{{ stats.total_visitors }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-chart-line"></i>
+            <h3>Today's Visitors</h3>
+            <p class="stat-value">{{ stats.today_visitors }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-star"></i>
+            <h3>Average Marks</h3>
+            <p class="stat-value">{{ "%.2f"|format(stats.avg_marks) if stats.avg_marks else 'N/A' }}</p>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <h2><i class="fas fa-history"></i> Recent Visitors</h2>
+            <a href="{{ url_for('export_data') }}" class="btn btn-secondary">
+                <i class="fas fa-download"></i> Export Data
+            </a>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Time (IST)</th>
+                        <th>CET Number</th>
+                        <th>Marks</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visitor in visitors %}
+                    <tr>
+                        <td>{{ visitor.ist_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{{ visitor.cet_number or 'N/A' }}</td>
+                        <td>{{ visitor.marks or 'N/A' }}</td>
+                        <td>{{ visitor.ip_address }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a href="{{ url_for('admin_logout') }}" class="btn btn-secondary" style="margin-top: 2rem;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</div>
+{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, var(--card-bg), #f8fafc);
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-card i {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .stat-card h3 {
+        color: var(--text-light);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .table-header h2 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .data-table th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    .data-table tr:hover {
+        background: #f8fafc;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

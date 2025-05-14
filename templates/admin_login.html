@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - KCET Agri Practical Rank Predictor{% endblock %}
+
+{% block header %}Admin Login{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" class="form">
+        <div class="form-group">
+            <label class="input-label">
+                <i class="fas fa-user"></i> Username
+            </label>
+            <div class="input-group">
+                <input type="text" name="username" class="input" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="input-label">
+                <i class="fas fa-lock"></i> Password
+            </label>
+            <div class="input-group">
+                <input type="password" name="password" class="input" required>
+            </div>
+        </div>
+        <button type="submit" class="btn">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+    </form>
+</div>
+{% endblock %}
