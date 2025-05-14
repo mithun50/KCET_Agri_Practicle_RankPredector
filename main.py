@@ -16,7 +16,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
     # Create admin user if not exists
-    if not Admin.query.filter_by(username='admin').first():
+    if not Admin.query.filter_by(username='Mithun').first():
         admin = Admin(
             username='Mithun',
             password=generate_password_hash('@Mithun#7411')
